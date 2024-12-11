@@ -1,11 +1,11 @@
-# RecipeAnalysis
+# Your Title Here
 
-**Name(s)**: (your name(s) here)
+**Name(s)**: Manjot Singh Samra, 
 
-**Website Link**: (your website link)
+**Website Link**: [(your website link)](https://dsc80.com/proj04/recipes-and-ratings/#getting-the-data)
 
 
-```py
+```python
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -13,14 +13,14 @@ from pathlib import Path
 import plotly.express as px
 pd.options.plotting.backend = 'plotly'
 
-#from dsc80_utils import * # Feel free to uncomment and use this.
+# from dsc80_utils import * # Feel free to uncomment and use this.
 ```
-
----
 
 ## Step 1: Introduction
 
-```py
+
+```python
+# TODO
 import pandas as pd
 import numpy as np
 
@@ -44,11 +44,13 @@ recipes_with_ratings = recipes.merge(avg_ratings.to_frame('avg_rating'),
                                    how='left')
 ```
 
----
 
+```python
 ## Step 2: Data Cleaning and Exploratory Data Analysis
+```
 
-```py
+
+```python
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -135,11 +137,118 @@ fig9 = px.imshow(correlation_matrix,
 fig9.show()
 ```
 
----
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_26.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
 
 ## Step 3: Assessment of Missingness
 
-```py
+
+```python
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -190,13 +299,38 @@ fig_perm = px.histogram(x=permuted_stats_cal,
 fig_perm.add_vline(x=observed_stat_cal, line_color='red', 
                    annotation_text='Observed Statistic')
 fig_perm.show()
+
+
 ```
 
----
+    Columns with missing values:
+    name                  1
+    description          70
+    avg_rating         2609
+    rating_category    2609
+    dtype: int64
+    
+    Missingness Analysis - Calories:
+    Observed difference in means: 87.8593
+    P-value: 0.0000
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
 
 ## Step 4: Hypothesis Testing
 
-```py
+
+```python
 # Hypothesis Test 1: Calorie Content Effect on Ratings
 print("Hypothesis Test 1: Effect of Calorie Content on Ratings")
 print("Null: High-calorie recipes and low calorie recipes have the same average rating")
@@ -293,11 +427,75 @@ fig4 = px.histogram(recipes_with_ratings,
 fig4.show()
 ```
 
----
+    Hypothesis Test 1: Effect of Calorie Content on Ratings
+    Null: High-calorie recipes and low calorie recipes have the same average rating
+    Alternative: High calorie recipes have a different average rating than low calorie recipes
+    
+    Calorie Test Results:
+    Observed difference in means (high cal - low cal): -0.0082
+    P-value: 0.0740
+    
+    Hypothesis Test 2: Effect of Preparation Time on Ratings
+    Null: Recipes with longer and shorter preparation times have the same average rating
+    Alternative: Recipes with longer preparation times have a different average rating than those with shorter preparation times
+    
+    Preparation Time Test Results:
+    Observed difference in means (long prep - short prep): -0.0315
+    P-value: 0.0000
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_30.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_30.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_30.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_30.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
 
 ## Step 5: Framing a Prediction Problem
 
-```py
+
+```python
 def extract_nutrition_columns(df):
     """
     Extracts nutrition information from the 'nutrition' column into separate columns.
@@ -425,11 +623,62 @@ print(f"\nTraining set size: {len(X_train)}")
 print(f"Test set size: {len(X_test)}")
 ```
 
----
+    Prediction Problem Information:
+    Total number of samples: 83782
+    Number of features: 10
+    
+    Features used:
+    - minutes
+    - n_steps
+    - n_ingredients
+    - calories
+    - total_fat
+    - sugar
+    - sodium
+    - protein
+    - saturated_fat
+    - carbohydrates
+    
+    Proportion of highly-rated recipes: 0.727
+    
+    Training set size: 67025
+    Test set size: 16757
+    Current columns: ['name', 'id', 'minutes', 'contributor_id', 'submitted', 'tags', 'nutrition', 'n_steps', 'steps', 'description', 'ingredients', 'n_ingredients', 'avg_rating', 'calories', 'rating_category']
+    
+    Sample nutrition data:
+    0         [138.4, 10.0, 50.0, 3.0, 3.0, 19.0, 6.0]
+    1     [595.1, 46.0, 211.0, 22.0, 13.0, 51.0, 26.0]
+    2        [194.8, 20.0, 6.0, 32.0, 22.0, 36.0, 3.0]
+    3    [878.3, 63.0, 326.0, 13.0, 20.0, 123.0, 39.0]
+    4       [267.0, 30.0, 12.0, 12.0, 29.0, 48.0, 2.0]
+    Name: nutrition, dtype: object
+    
+    Prediction Problem Information:
+    Total number of samples: 83782
+    Number of features: 10
+    
+    Features used:
+    - minutes
+    - n_steps
+    - n_ingredients
+    - calories
+    - total_fat
+    - sugar
+    - sodium
+    - protein
+    - saturated_fat
+    - carbohydrates
+    
+    Proportion of highly-rated recipes: 0.727
+    
+    Training set size: 67025
+    Test set size: 16757
+
 
 ## Step 6: Baseline Model
 
-```py
+
+```python
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -511,11 +760,58 @@ sample_data = pd.DataFrame({
 print(sample_data)
 ```
 
----
+    Class Distributions:
+    
+    Actual Training Distribution:
+    avg_rating
+    1    0.726609
+    0    0.273391
+    Name: proportion, dtype: float64
+    
+    Predicted Training Distribution:
+    1    0.683223
+    0    0.316777
+    Name: proportion, dtype: float64
+    
+    Baseline Model Performance
+    
+    Training Set Performance:
+    Accuracy: 0.590
+    F1-Score: 0.710
+    
+    Test Set Performance:
+    Accuracy: 0.592
+    F1-Score: 0.712
+    
+    Classification Report on Test Set:
+                  precision    recall  f1-score   support
+    
+               0       0.28      0.32      0.30      4513
+               1       0.73      0.69      0.71     12244
+    
+        accuracy                           0.59     16757
+       macro avg       0.51      0.51      0.51     16757
+    weighted avg       0.61      0.59      0.60     16757
+    
+    
+    Feature Coefficients:
+        Feature  Coefficient
+    0   minutes    -0.002492
+    1  calories    -0.014594
+    
+    Sample Predictions:
+           Actual  Predicted  Minutes  Calories
+    53372       1          1        5     252.2
+    75333       0          1       20     378.3
+    46528       1          1      495     225.3
+    53825       1          1       22     379.1
+    69457       1          0       25     458.4
+
 
 ## Step 7: Final Model
 
-```py
+
+```python
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
@@ -617,11 +913,47 @@ print("Baseline Test F1-Score: 0.712")
 print(f"Final Model Test F1-Score: {f1_score(y_test, y_pred):.3f}")
 ```
 
----
+    Training model with 3-fold cross validation...
+    
+    Best Parameters: {'classifier__max_depth': 20, 'classifier__min_samples_split': 5, 'classifier__n_estimators': 100}
+    
+    Final Model Performance
+    
+    Test Set Performance:
+    Accuracy: 0.670
+    F1-Score: 0.790
+    
+    Classification Report:
+                  precision    recall  f1-score   support
+    
+               0       0.30      0.17      0.22      4513
+               1       0.74      0.85      0.79     12244
+    
+        accuracy                           0.67     16757
+       macro avg       0.52      0.51      0.51     16757
+    weighted avg       0.62      0.67      0.64     16757
+    
+    
+    Feature Importances:
+                    feature  importance
+    6     calories_per_step    0.178831
+    3              calories    0.177195
+    5               protein    0.125463
+    0               minutes    0.124861
+    7  steps_per_ingredient    0.119478
+    4             total_fat    0.119256
+    2         n_ingredients    0.080315
+    1               n_steps    0.074601
+    
+    Improvement over Baseline:
+    Baseline Test F1-Score: 0.712
+    Final Model Test F1-Score: 0.790
+
 
 ## Step 8: Fairness Analysis
 
-```py
+
+```python
 from sklearn.metrics import precision_score
 import plotly.express as px
 
@@ -672,7 +1004,25 @@ for _ in range(n_permutations):
 p_value = np.mean(np.abs(permuted_diffs) >= np.abs(observed_diff))
 
 print(f"\nP-value: {p_value:.3f}")
+
 ```
 
----
+    Fairness Analysis: High-Calorie vs Low-Calorie Recipes
+    
+    Null Hypothesis: Our model is fair. Its precision for high-calorie and
+    low-calorie recipes are roughly the same, and any differences are due to random chance.
+    
+    Alternative Hypothesis: Our model is unfair. Its precision for high-calorie
+    recipes is different from its precision for low-calorie recipes.
+    
+    Precision for low-calorie recipes: 0.745
+    Precision for high-calorie recipes: 0.728
+    Observed difference in precision: -0.017
+    
+    P-value: 0.023
 
+
+
+```python
+
+```

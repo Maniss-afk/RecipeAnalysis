@@ -63,118 +63,16 @@ recipes_with_ratings = recipes.merge(avg_ratings.to_frame('avg_rating'),
 recipes_with_ratings['calories'] = recipes_with_ratings['nutrition'].apply(lambda x: eval(x)[0])
 
 recipes_with_ratings[['name', 'id', 'calories', 'avg_rating']]
+print(recipes_with_ratings[['name', 'id', 'calories', 'avg_rating']].head().to_markdown(index=False))
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>name</th>
-      <th>id</th>
-      <th>calories</th>
-      <th>avg_rating</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1 brownies in the world    best ever</td>
-      <td>333281</td>
-      <td>138.4</td>
-      <td>4.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1 in canada chocolate chip cookies</td>
-      <td>453467</td>
-      <td>595.1</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>412 broccoli casserole</td>
-      <td>306168</td>
-      <td>194.8</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>millionaire pound cake</td>
-      <td>286009</td>
-      <td>878.3</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>2000 meatloaf</td>
-      <td>475785</td>
-      <td>267.0</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>83777</th>
-      <td>zydeco soup</td>
-      <td>486161</td>
-      <td>415.2</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>83778</th>
-      <td>zydeco spice mix</td>
-      <td>493372</td>
-      <td>14.8</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>83779</th>
-      <td>zydeco ya ya deviled eggs</td>
-      <td>308080</td>
-      <td>59.2</td>
-      <td>5.0</td>
-    </tr>
-    <tr>
-      <th>83780</th>
-      <td>cookies by design   cookies on a stick</td>
-      <td>298512</td>
-      <td>188.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>83781</th>
-      <td>cookies by design   sugar shortbread cookies</td>
-      <td>298509</td>
-      <td>174.9</td>
-      <td>3.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>83782 rows × 4 columns</p>
-</div>
-
+    | name                                 |     id |   calories |   avg_rating |
+    |:-------------------------------------|-------:|-----------:|-------------:|
+    | 1 brownies in the world    best ever | 333281 |      138.4 |            4 |
+    | 1 in canada chocolate chip cookies   | 453467 |      595.1 |            5 |
+    | 412 broccoli casserole               | 306168 |      194.8 |            5 |
+    | millionaire pound cake               | 286009 |      878.3 |            5 |
+    | 2000 meatloaf                        | 475785 |      267   |            5 |
 
 
 

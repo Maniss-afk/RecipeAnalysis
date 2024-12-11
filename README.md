@@ -448,6 +448,23 @@ fig_perm.write_html("assets/fig12.html", include_plotlyjs="cdn")
 ></iframe>
 
 
+### Missingness Analysis
+
+We conducted a missingness permutation test to examine the relationship between recipe characteristics and missing ratings. Our analysis focused on whether the missingness of ratings depends on other variables in our dataset.
+
+Testing Rating Missingness vs. Calories
+
+<iframe src="assets/fig12.html" width="800" height="600" frameborder="0" ></iframe>
+The histogram shows the distribution of our test statistic (difference in mean calories between recipes with and without ratings) across 1000 permutations. The red line indicates our observed difference of 87.86 calories. With a p-value of 0.000, we reject the null hypothesis that ratings are missing completely at random with respect to calories.
+
+This significant result suggests that the missingness of ratings depends on the calorie content of recipes - specifically, recipes with missing ratings tend to have different calorie contents than those with ratings. The data indicates that recipes with missing ratings have, on average, about 88 more calories than recipes with ratings.
+
+This strengthens the NMAR hypothesis, as it can show a clear relationship between missingness and recipe characteristics. Higher-calorie recipes are less likely to receive ratings, which could be because:
+
+People might be less likely to make high-calorie recipes
+There might be some hesitation to rate high-calorie dishes
+The relationship might reflect broader patterns in user engagement with different types of recipes
+
 
 ## Hypothesis Testing
 
@@ -615,6 +632,53 @@ fig4.write_html("assets/fig16.html", include_plotlyjs="cdn")
     frameborder="0"
     allowfullscreen
 ></iframe>
+
+### Hypothesis Testing
+
+We conducted two key hypothesis tests to understand factors affecting recipe ratings:
+
+Test 1: Effect of Calorie Content on Ratings
+
+**Null Hypothesis**: High-calorie recipes and low-calorie recipes have the same average rating, and any observed differences are due to random chance.
+
+**Alternative Hypothesis**: High-calorie recipes have a different average rating than low-calorie recipes.
+
+**Test Statistic**: Difference in mean ratings between high-calorie (above median) and low-calorie (below median) recipes.
+
+**Significance Level**: α = 0.05
+
+<iframe
+  src="assets/fig15.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+**Results**: We observed a difference of -0.0082 in mean ratings, with a p-value of 0.062. Since our p-value is greater than our significance level, we fail to reject the null hypothesis. This shows that there isn't strong evidence that calorie content significantly influences recipe ratings.
+
+### Test 2: Effect of Preparation Time on Ratings
+
+**Null Hypothesis**: Recipes with longer and shorter preparation times have the same average rating, and any observed differences are due to random chance.
+
+**Alternative Hypothesis**: Recipes with longer preparation times have a different average rating than those with shorter preparation times.
+
+**Test Statistic**: Difference in mean ratings between long-prep (above median) and short-prep (below median) recipes.
+
+**Significance Level**: α = 0.05
+
+<iframe
+  src="assets/prep-time-test-distribution.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+**Results**: We observed a difference of -0.0315 in mean ratings, with a p-value < 0.001. This shows that there might be a relationship between preparation time and recipe ratings, with shorter-prep recipes tending to receive slightly higher ratings.
+
+### Justification of Choices
+
+- We chose to use difference in means as our test statistic because it's interpretable and is appropriate for comparing different continuous variables (ratings) between two groups.
+- The 0.05 significance level is a standard choice that balances Type I and Type II errors.
 
 
 

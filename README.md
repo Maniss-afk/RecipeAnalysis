@@ -1109,6 +1109,57 @@ print(sample_data)
     53825       1          1       22     379.1
     69457       1          0       25     458.4
 
+### Prediction Model
+
+### Model Description and Features
+
+Our final model uses a Random Forest Classifier to predict whether a recipe will be highly rated ( which is greater than or equal to 4.5 stars). We selected different features that capture both recipe complexity and nutritional content:
+
+**Quantitative Features **
+- Preparation time (minutes)
+- Number of steps
+- Number of ingredients
+- Nutritional values:
+  - Calories
+  - Total fat
+  - Protein
+- Engineered features:
+  - Calories per step
+  - Steps per ingredient
+
+We used StandardScaler to normalize all features before training, ensuring they're on comparable scales.
+
+### Model Performance
+
+Our model achieved the following metrics on the test set:
+- Accuracy: 0.671
+- F1-Score: 0.792
+- Precision: 0.74 (High-rated recipes)
+- Recall: 0.86 (High-rated recipes)
+
+### Feature Importance
+The most influential features in predicting high ratings were:
+1. Calories
+2. Calories per step 
+3. Protein content
+4. Preparation time
+
+### Model Assessment
+
+While our model shows improvement over the baseline (F1-Score increase from 0.712 to 0.792), we believe it's only moderately good for several reasons:
+
+**Strengths:**
+- Significantly better than random guessing
+- Good recall for highly-rated recipes (0.86)
+- Interpretable feature importance
+
+**Limitations:**
+- Moderate accuracy (0.671)
+- Potential bias towards predicting high ratings due to class imbalance
+- Lower performance on identifying poorly-rated recipes
+
+The model's performance suggests that while recipe ratings are somewhat predictable from objective features, there are likely subjective factors that our current features don't capture.
+
 
 ## Final Model
 
@@ -1251,6 +1302,54 @@ print(f"Final Model Test F1-Score: {f1_score(y_test, y_pred):.3f}")
     Baseline Test F1-Score: 0.712
     Final Model Test F1-Score: 0.790
 
+### Feature Selection and Engineering
+
+Building upon our baseline model (which used only cooking time and calories), we engineered additional features that capture recipe complexity and nutritional density:
+
+1. **Calories per Step** (calories/n_steps)
+- Rationale: This feature captures recipe efficiency - a recipe with high calories but few steps might indicate simpler, higher-calorie ingredients (like desserts), while many steps for fewer calories might suggest more complex, health-focused dishes
+- From a recipe perspective, this helps distinguish between naturally caloric dishes and potentially overcomplicated ones
+
+2. **Steps per Ingredient** (n_steps/n_ingredients)
+- Rationale: This measures recipe complexity in a normalized way. A high ratio suggests more complex preparation per ingredient, while a low ratio suggests simpler preparation
+- This could capture user satisfaction better than raw step count, as it accounts for whether the complexity is "justified" by the number of ingredients
+
+3. **Protein Content**
+- Rationale: Distinct from total calories, protein content often indicates a recipe's role as a main dish vs. snack/dessert
+- User expectations often differ for protein-rich main dishes compared to other recipes
+
+4. **Total Fat**
+- Rationale: Fat content often correlates with flavor and satiety
+- Users might have different expectations for indulgent vs. light recipes
+
+### Model Selection and Hyperparameters
+
+We chose a Random Forest Classifier for our final model because:
+- It handles non-linear relationships between features
+- It's robust to different scales and types of features
+- It provides interpretable feature importance scores
+
+Best performing hyperparameters from our grid search:
+- n_estimators: 100
+- max_depth: 20
+- min_samples_split: 5
+
+### Model Improvement
+
+Our final model showed significant improvement over the baseline logistic regression:
+
+**Baseline Model:**
+- F1-Score: 0.712
+- Accuracy: 0.590
+
+**Final Model:**
+- F1-Score: 0.792 (+0.08)
+- Accuracy: 0.671 (+0.081)
+
+The improvement is from:
+The addition of engineered features that capture recipe complexity in more nuanced ways
+
+
 
 ## Fairness Analysis
 
@@ -1363,13 +1462,46 @@ else:
     There is significant evidence that the model's precision differs between
     high-calorie and low-calorie recipes.
 
+### Motivation
+We focused on this project since our society focuses more on how healthy foods are, it's crucial to ensure our recipe rating prediction model doesn't unfairly discriminate between recipes based on their caloric content. This fairness assessment will show whether our model maintains consistent predictive performance across different types of recipes.
 
+### Test Design
+- **Groups Compared**:
+  - **Low-calorie recipes** (≤ median calories, 374.5 calories/serving)
+  - **High-calorie recipes** (> median calories)
 
-```python
+- **Evaluation Metric**: Precision
+  - *Rationale*: We chose precision because it directly measures the reliability of our "highly-rated" predictions. A difference in precision between groups would indicate that our model is more trustworthy for one type of recipe over another.
 
-```
+### Hypotheses
+**Null Hypothesis (H₀)**: The model is fair - any difference in precision between high-calorie and low-calorie recipes is due to random chance.
 
+**Alternative Hypothesis (H₁)**: The model is biased - there is a systematic difference in precision between high-calorie and low-calorie recipes.
 
-```python
+### Statistical Analysis
+- **Test Statistic**: Difference in precision (high-calorie - low-calorie)
+- **Significance Level**: α = 0.05
+- **Observed Results**:
+  - Low-calorie precision: 0.745
+  - High-calorie precision: 0.728
+  - Observed difference: -0.017
 
-```
+### Results and Implications
+With a p-value of 0.022 (< α = 0.05), our analysis shows evidence of model bias. The model appears to be more reliable when predicting highly-rated low-calorie recipes compared to high-calorie ones.
+
+This bias could stem from several factors:
+1. Potential sampling bias in our training data
+2. Different user rating patterns for high vs. low-calorie recipes
+3. Varying complexity in recipe features between calorie ranges
+
+### In order to eliminate bias we can:
+1. Collect more balanced training data across calorie ranges
+2. Consider separate models for different recipe categories
+3. Add features that better capture the unique characteristics of high-calorie recipes
+
+## Conclusion
+Our analysis of Food.com recipes shows several key insights about recipe ratings and the challenges of predicting them. Through our in depth analysis, we discovered that while most recipes receive favorable ratings (above 4 stars), the factors influencing these ratings are complex and correlated. Our machine learning model, while showing significant improvement over the baseline (F1-score increase from 0.712 to 0.792), reveals that recipe success isn't only determined by quantifiable features like time or nutritional content.
+
+The fairness analysis showed a significant bias in our model's performance between high and low-calorie recipes, which highlights the importance of considering ethical implications in machine learning applications, even in seemingly straightforward projects like recipe recommendations. This project demonstrates that while we can predict recipe ratings with moderate success, there can still be room for improvement in creating fair and applicable prediction models.
+
+Moving forward, this project can show us several promising directions for future research. For example, we can investigate different user-specific preferences,  incorporating more qualitative features, and develop more specialized models for different recipe categories. These enhancements could lead to more accurate and equitable recipe rating predictions, ultimately helping both home cooks and professional cooks.

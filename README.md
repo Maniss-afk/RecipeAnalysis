@@ -1,8 +1,8 @@
-# Your Title Here
+# Predicting Highly-Rated Recipes: A Machine Learning Analysis of Food.com Data
 
-**Name(s)**: Manjot Singh Samra, 
+**Name(s)**: Stephanie Yue & Manjot Singh Samra
 
-**Website Link**: [(your website link)](https://dsc80.com/proj04/recipes-and-ratings/#getting-the-data)
+**Website Link**: Food.com
 
 
 ```python
@@ -13,10 +13,10 @@ from pathlib import Path
 import plotly.express as px
 pd.options.plotting.backend = 'plotly'
 
-# from dsc80_utils import * # Feel free to uncomment and use this.
+# from dsc80_utils import * 
 ```
 
-## Step 1: Introduction
+## Introduction
 
 
 ```python
@@ -46,23 +46,197 @@ recipes_with_ratings = recipes.merge(avg_ratings.to_frame('avg_rating'),
 
 
 ```python
-## Step 2: Data Cleaning and Exploratory Data Analysis
+import pandas as pd
+import numpy as np
+
+recipes = pd.read_csv('food_data/RAW_recipes.csv')
+interactions = pd.read_csv('food_data/RAW_interactions.csv')
+
+merged_df = recipes.merge(interactions, left_on='id', right_on='recipe_id', how='left')
+merged_df['rating'] = merged_df['rating'].replace(0, np.nan)
+avg_ratings = merged_df.groupby('recipe_id')['rating'].mean()
+recipes_with_ratings = recipes.merge(avg_ratings.to_frame('avg_rating'), 
+                                   left_on='id', 
+                                   right_index=True, 
+                                   how='left')
+
+recipes_with_ratings['calories'] = recipes_with_ratings['nutrition'].apply(lambda x: eval(x)[0])
+
+recipes_with_ratings[['name', 'id', 'calories', 'avg_rating']]
 ```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>id</th>
+      <th>calories</th>
+      <th>avg_rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1 brownies in the world    best ever</td>
+      <td>333281</td>
+      <td>138.4</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1 in canada chocolate chip cookies</td>
+      <td>453467</td>
+      <td>595.1</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>412 broccoli casserole</td>
+      <td>306168</td>
+      <td>194.8</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>millionaire pound cake</td>
+      <td>286009</td>
+      <td>878.3</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2000 meatloaf</td>
+      <td>475785</td>
+      <td>267.0</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>83777</th>
+      <td>zydeco soup</td>
+      <td>486161</td>
+      <td>415.2</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>83778</th>
+      <td>zydeco spice mix</td>
+      <td>493372</td>
+      <td>14.8</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>83779</th>
+      <td>zydeco ya ya deviled eggs</td>
+      <td>308080</td>
+      <td>59.2</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>83780</th>
+      <td>cookies by design   cookies on a stick</td>
+      <td>298512</td>
+      <td>188.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>83781</th>
+      <td>cookies by design   sugar shortbread cookies</td>
+      <td>298509</td>
+      <td>174.9</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>83782 rows × 4 columns</p>
+</div>
+
+
 
 
 ```python
 import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+import plotly.io as pio
+pio.renderers.default = 'iframe'  # or try 'notebook'
+
+fig1 = px.histogram(recipes_with_ratings, 
+                   x='avg_rating',
+                   nbins=50,
+                   title='Distribution of Recipe Ratings')
+fig1.show()
+fig1.write_html("assets/fig1.html", include_plotlyjs="cdn")
+
+fig2 = px.scatter(recipes_with_ratings,
+                 x='calories',
+                 y='avg_rating',
+                 title='Recipe Calories vs Average Rating')
+fig2.show()
+fig2.write_html("assets/fig2.html", include_plotlyjs="cdn")
+```
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_20.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_20.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+## Data Cleaning and Exploratory Data Analysis
+
+
+```python
+# First, extract calories from nutrition data
+recipes_with_ratings['calories'] = recipes_with_ratings['nutrition'].apply(lambda x: eval(x)[0])
 
 # UNIVARIATE ANALYSIS
-
 # 1. Distribution of Ratings
 fig1 = px.histogram(recipes_with_ratings, 
                    x='avg_rating',
                    nbins=50,
                    title='Distribution of Recipe Ratings')
 fig1.show()
+fig1.write_html("assets/fig3.html", include_plotlyjs="cdn")
 
 # 2. Distribution of Calories
 fig2 = px.histogram(recipes_with_ratings, 
@@ -71,6 +245,7 @@ fig2 = px.histogram(recipes_with_ratings,
                    title='Distribution of Recipe Calories')
 fig2.update_layout(xaxis_range=[0, 2000])  # Limiting x-axis for better visibility
 fig2.show()
+fig2.write_html("assets/fig4.html", include_plotlyjs="cdn")
 
 # 3. Distribution of Cooking Time
 fig3 = px.histogram(recipes_with_ratings, 
@@ -79,15 +254,16 @@ fig3 = px.histogram(recipes_with_ratings,
                    title='Distribution of Cooking Times')
 fig3.update_layout(xaxis_range=[0, 300])  # Limiting x-axis for better visibility
 fig3.show()
+fig3.write_html("assets/fig5.html", include_plotlyjs="cdn")
 
 # 4. Distribution of Number of Steps
 fig4 = px.histogram(recipes_with_ratings, 
                    x='n_steps',
                    title='Distribution of Number of Steps in Recipes')
 fig4.show()
+fig4.write_html("assets/fig6.html", include_plotlyjs="cdn")
 
 # BIVARIATE ANALYSIS
-
 # 1. Calories vs Ratings Scatter Plot
 fig5 = px.scatter(recipes_with_ratings,
                  x='calories',
@@ -96,6 +272,7 @@ fig5 = px.scatter(recipes_with_ratings,
                  opacity=0.6)
 fig5.update_layout(xaxis_range=[0, 2000])
 fig5.show()
+fig5.write_html("assets/fig7.html", include_plotlyjs="cdn")
 
 # 2. Cooking Time vs Ratings
 fig6 = px.scatter(recipes_with_ratings,
@@ -105,6 +282,7 @@ fig6 = px.scatter(recipes_with_ratings,
                  opacity=0.6)
 fig6.update_layout(xaxis_range=[0, 300])
 fig6.show()
+fig6.write_html("assets/fig8.html", include_plotlyjs="cdn")
 
 # 3. Number of Steps vs Rating Box Plot
 fig7 = px.box(recipes_with_ratings,
@@ -112,8 +290,9 @@ fig7 = px.box(recipes_with_ratings,
               y='avg_rating',
               title='Number of Steps vs Rating')
 fig7.show()
+fig7.write_html("assets/fig9.html", include_plotlyjs="cdn")
 
-# 4. Rating vs Minutes Box Plot (Modified to use cut instead of qcut)
+# 4. Rating vs Minutes Box Plot
 recipes_with_ratings['rating_category'] = pd.cut(recipes_with_ratings['avg_rating'],
                                                bins=[0, 2, 3, 4, 4.5, 5],
                                                labels=['1-2', '2-3', '3-4', '4-4.5', '4.5-5'],
@@ -125,6 +304,7 @@ fig8 = px.box(recipes_with_ratings,
               title='Rating Categories vs Cooking Time')
 fig8.update_layout(yaxis_range=[0, 300])
 fig8.show()
+fig8.write_html("assets/fig10.html", include_plotlyjs="cdn")
 
 # Additional Analysis: Correlation Matrix
 numeric_cols = ['calories', 'minutes', 'n_steps', 'avg_rating']
@@ -135,6 +315,7 @@ fig9 = px.imshow(correlation_matrix,
                  color_continuous_scale="RdBu",
                  title="Correlation Matrix of Numeric Variables")
 fig9.show()
+fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
 ```
 
 
@@ -142,7 +323,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -154,7 +335,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -166,7 +347,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -178,7 +359,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -190,7 +371,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -202,7 +383,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -214,7 +395,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -226,7 +407,7 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -238,14 +419,14 @@ fig9.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_26.html"
+    src="iframe_figures/figure_22.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
 
 
 
-## Step 3: Assessment of Missingness
+## Assessment of Missingness
 
 
 ```python
@@ -300,6 +481,7 @@ fig_perm.add_vline(x=observed_stat_cal, line_color='red',
                    annotation_text='Observed Statistic')
 fig_perm.show()
 
+fig_perm.write_html("assets/fig12.html", include_plotlyjs="cdn")
 
 ```
 
@@ -320,14 +502,14 @@ fig_perm.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_28.html"
+    src="iframe_figures/figure_23.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
 
 
 
-## Step 4: Hypothesis Testing
+## Hypothesis Testing
 
 
 ```python
@@ -399,6 +581,7 @@ fig1 = px.histogram(x=permuted_diffs_cal,
 fig1.add_vline(x=observed_diff_cal, line_color='red',
                annotation_text='Observed Difference')
 fig1.show()
+fig1.write_html("assets/fig13.html", include_plotlyjs="cdn")
 
 fig2 = px.histogram(x=permuted_diffs_time,
                    title='Hypothesis Test 2: Long vs Short Preparation Time Ratings',
@@ -406,6 +589,7 @@ fig2 = px.histogram(x=permuted_diffs_time,
 fig2.add_vline(x=observed_diff_time, line_color='red',
                annotation_text='Observed Difference')
 fig2.show()
+fig2.write_html("assets/fig14.html", include_plotlyjs="cdn")
 
 # Distribution comparisons
 fig3 = px.histogram(recipes_with_ratings, 
@@ -416,6 +600,7 @@ fig3 = px.histogram(recipes_with_ratings,
                    labels={'color': 'High Calorie'},
                    title='Distribution of Ratings by Calorie Content')
 fig3.show()
+fig3.write_html("assets/fig15.html", include_plotlyjs="cdn")
 
 fig4 = px.histogram(recipes_with_ratings, 
                    x='avg_rating',
@@ -425,6 +610,7 @@ fig4 = px.histogram(recipes_with_ratings,
                    labels={'color': 'Long Preparation Time'},
                    title='Distribution of Ratings by Preparation Time')
 fig4.show()
+fig4.write_html("assets/fig16.html", include_plotlyjs="cdn")
 ```
 
     Hypothesis Test 1: Effect of Calorie Content on Ratings
@@ -449,7 +635,7 @@ fig4.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_30.html"
+    src="iframe_figures/figure_24.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -461,7 +647,7 @@ fig4.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_30.html"
+    src="iframe_figures/figure_24.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -473,7 +659,7 @@ fig4.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_30.html"
+    src="iframe_figures/figure_24.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -485,34 +671,28 @@ fig4.show()
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_30.html"
+    src="iframe_figures/figure_24.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
 
 
 
-## Step 5: Framing a Prediction Problem
+## Framing a Prediction Problem
 
 
 ```python
+import pandas as pd
+import plotly.express as px
+from sklearn.model_selection import train_test_split
+
+# Define functions
 def extract_nutrition_columns(df):
     """
     Extracts nutrition information from the 'nutrition' column into separate columns.
-    
-    Args:
-        df: DataFrame containing a 'nutrition' column with string representations of lists
-        
-    Returns:
-        DataFrame with new nutrition columns
     """
-    # Create a copy of the DataFrame to avoid modifying the original
     df_copy = df.copy()
-    
-    # Convert string representation of list to actual list and extract values
     nutrition_values = df_copy['nutrition'].apply(eval)
-    
-    # Create new columns for each nutrition value
     df_copy['calories'] = nutrition_values.str[0]
     df_copy['total_fat'] = nutrition_values.str[1]
     df_copy['sugar'] = nutrition_values.str[2]
@@ -520,29 +700,20 @@ def extract_nutrition_columns(df):
     df_copy['protein'] = nutrition_values.str[4]
     df_copy['saturated_fat'] = nutrition_values.str[5]
     df_copy['carbohydrates'] = nutrition_values.str[6]
-    
     return df_copy
 
 def prepare_classification_data(df):
     """
     Prepares features and target for predicting if a recipe will be highly rated.
     """
-    # First extract nutrition columns
     df = extract_nutrition_columns(df)
-    
-    # Create features array from nutrition and recipe characteristics
     nutrition_cols = ['calories', 'total_fat', 'sugar', 'sodium', 
-                     'protein', 'saturated_fat', 'carbohydrates']
+                      'protein', 'saturated_fat', 'carbohydrates']
     features = df[['minutes', 'n_steps', 'n_ingredients'] + nutrition_cols].copy()
-    
-    # Create binary target (1 if rating >= 4.5, 0 otherwise)
     target = (df['avg_rating'] >= 4.5).astype(int)
-    
-    # Remove rows where target is NaN (missing ratings)
     mask = ~target.isna()
     features = features[mask]
     target = target[mask]
-    
     return features, target
 
 # Prepare the data
@@ -553,65 +724,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     features, target, test_size=0.2, random_state=42
 )
 
-# Print information about the prediction problem
-print("Prediction Problem Information:")
-print(f"Total number of samples: {len(features)}")
-print(f"Number of features: {features.shape[1]}")
-print("\nFeatures used:")
-for col in features.columns:
-    print(f"- {col}")
-print(f"\nProportion of highly-rated recipes: {target.mean():.3f}")
-print(f"\nTraining set size: {len(X_train)}")
-print(f"Test set size: {len(X_test)}")
-
-# First, let's confirm what columns we currently have 
-print("Current columns:", recipes_with_ratings.columns.tolist())
-
-# Let's examine what the nutrition column looks like
-print("\nSample nutrition data:")
-print(recipes_with_ratings['nutrition'].head())
-
-def prepare_classification_data(df):
-    """
-    Prepares features and target for predicting if a recipe will be highly rated.
-    """
-    # First extract nutrition values from the strings
-    df = df.copy()
-    
-    # Convert nutrition string to list and extract each component
-    nutrition_data = df['nutrition'].apply(eval)
-    df['calories'] = nutrition_data.str[0]
-    df['total_fat'] = nutrition_data.str[1]
-    df['sugar'] = nutrition_data.str[2]
-    df['sodium'] = nutrition_data.str[3]
-    df['protein'] = nutrition_data.str[4]
-    df['saturated_fat'] = nutrition_data.str[5]
-    df['carbohydrates'] = nutrition_data.str[6]
-    
-    # Now create features array from nutrition and recipe characteristics
-    nutrition_cols = ['calories', 'total_fat', 'sugar', 'sodium', 
-                     'protein', 'saturated_fat', 'carbohydrates']
-    features = df[['minutes', 'n_steps', 'n_ingredients'] + nutrition_cols].copy()
-    
-    # Create binary target (1 if rating >= 4.5, 0 otherwise)
-    target = (df['avg_rating'] >= 4.5).astype(int)
-    
-    # Remove rows where target is NaN (missing ratings)
-    mask = ~target.isna()
-    features = features[mask]
-    target = target[mask]
-    
-    return features, target
-
-# Prepare the data
-features, target = prepare_classification_data(recipes_with_ratings)
-
-# Split into training and test sets
-X_train, X_test, y_train, y_test = train_test_split(
-    features, target, test_size=0.2, random_state=42
-)
-
-# Print information about the prediction problem
+# Print and save information about the prediction problem
 print("\nPrediction Problem Information:")
 print(f"Total number of samples: {len(features)}")
 print(f"Number of features: {features.shape[1]}")
@@ -621,8 +734,40 @@ for col in features.columns:
 print(f"\nProportion of highly-rated recipes: {target.mean():.3f}")
 print(f"\nTraining set size: {len(X_train)}")
 print(f"Test set size: {len(X_test)}")
+
+# Save feature information as an HTML file
+features_info = pd.DataFrame({
+    "Feature": features.columns,
+    "Description": ["Time in minutes", "Number of steps", "Number of ingredients"] + 
+                   ["Calories", "Total fat", "Sugar", "Sodium", 
+                    "Protein", "Saturated fat", "Carbohydrates"]
+})
+features_info.to_html("assets/fig17.html")
+
+# Create and save visualizations
+fig1 = px.histogram(target, title="Distribution of Highly Rated Recipes (Binary Target)",
+                    labels={'value': 'Highly Rated (1 = Yes, 0 = No)'})
+fig1.show()
+fig1.write_html("assets/fig18.html", include_plotlyjs="cdn")
+
+# Visualize feature distributions
+num = 18
+for col in features.columns:
+    fig = px.histogram(features, x=col, title=f"Distribution of {col}",
+                       labels={col: col})
+    fig.show()
+    num = num + 1
+    fig.write_html(f"assets/fig{num}.html", include_plotlyjs="cdn")
+
+num = num + 1
+
+# Print and save nutrition column sample
+print("\nSample nutrition data:")
+print(recipes_with_ratings['nutrition'].head())
+recipes_with_ratings['nutrition'].head().to_frame().to_html(f"assets/fig{num}.html")
 ```
 
+    
     Prediction Problem Information:
     Total number of samples: 83782
     Number of features: 10
@@ -643,7 +788,140 @@ print(f"Test set size: {len(X_test)}")
     
     Training set size: 67025
     Test set size: 16757
-    Current columns: ['name', 'id', 'minutes', 'contributor_id', 'submitted', 'tags', 'nutrition', 'n_steps', 'steps', 'description', 'ingredients', 'n_ingredients', 'avg_rating', 'calories', 'rating_category']
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_28.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
     
     Sample nutrition data:
     0         [138.4, 10.0, 50.0, 3.0, 3.0, 19.0, 6.0]
@@ -652,30 +930,9 @@ print(f"Test set size: {len(X_test)}")
     3    [878.3, 63.0, 326.0, 13.0, 20.0, 123.0, 39.0]
     4       [267.0, 30.0, 12.0, 12.0, 29.0, 48.0, 2.0]
     Name: nutrition, dtype: object
-    
-    Prediction Problem Information:
-    Total number of samples: 83782
-    Number of features: 10
-    
-    Features used:
-    - minutes
-    - n_steps
-    - n_ingredients
-    - calories
-    - total_fat
-    - sugar
-    - sodium
-    - protein
-    - saturated_fat
-    - carbohydrates
-    
-    Proportion of highly-rated recipes: 0.727
-    
-    Training set size: 67025
-    Test set size: 16757
 
 
-## Step 6: Baseline Model
+## Baseline Model
 
 
 ```python
@@ -808,7 +1065,7 @@ print(sample_data)
     69457       1          0       25     458.4
 
 
-## Step 7: Final Model
+## Final Model
 
 
 ```python
@@ -950,7 +1207,7 @@ print(f"Final Model Test F1-Score: {f1_score(y_test, y_pred):.3f}")
     Final Model Test F1-Score: 0.790
 
 
-## Step 8: Fairness Analysis
+## Fairness Analysis
 
 
 ```python
@@ -1005,6 +1262,27 @@ p_value = np.mean(np.abs(permuted_diffs) >= np.abs(observed_diff))
 
 print(f"\nP-value: {p_value:.3f}")
 
+# Visualize the permutation test results
+fig = px.histogram(x=permuted_diffs,
+                  title='Permutation Test Results: Differences in Precision Between High and Low Calorie Recipes',
+                  labels={'x': 'Difference in Precision'})
+fig.add_vline(x=observed_diff, line_color='red',
+              annotation_text='Observed Difference')
+fig.show()
+fig.write_html(f"assets/fig31.html", include_plotlyjs="cdn")
+
+
+# Make conclusion
+alpha = 0.05
+print("\nConclusion:")
+if p_value < alpha:
+    print(f"With a p-value of {p_value:.3f}, we reject the null hypothesis.")
+    print("There is significant evidence that the model's precision differs between")
+    print("high-calorie and low-calorie recipes.")
+else:
+    print(f"With a p-value of {p_value:.3f}, we fail to reject the null hypothesis.")
+    print("There is not significant evidence that the model's precision differs between")
+    print("high-calorie and low-calorie recipes.")
 ```
 
     Fairness Analysis: High-Calorie vs Low-Calorie Recipes
@@ -1019,8 +1297,32 @@ print(f"\nP-value: {p_value:.3f}")
     Precision for high-calorie recipes: 0.728
     Observed difference in precision: -0.017
     
-    P-value: 0.023
+    P-value: 0.017
 
+
+
+<iframe
+    scrolling="no"
+    width="100%"
+    height="545px"
+    src="iframe_figures/figure_35.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+
+
+    
+    Conclusion:
+    With a p-value of 0.017, we reject the null hypothesis.
+    There is significant evidence that the model's precision differs between
+    high-calorie and low-calorie recipes.
+
+
+
+```python
+
+```
 
 
 ```python

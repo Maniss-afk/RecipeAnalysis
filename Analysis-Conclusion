@@ -14,6 +14,82 @@ Notably, there's a positive correlation between cooking time and number of steps
 more complex recipes tend to take longer to prepare. However, neither variable shows a strong correlation with 
 ratings, indicating that recipe complexity and duration aren't major factors in determining user satisfaction.
 
+In our dataset, the avg_rating column is likely to be NMAR (Not Missing At Random). Here's our reasoning:
+
+The missingness in ratings may be directly related to the unobserved rating values themselves - users might be
+less likely to rate recipes they found mediocre or unremarkable. This creates a scenario where the probability 
+of a rating being missing depends on what the rating would have been, which is the definition of NMAR data.
+
+To make this missingness mechanism MAR (Missing At Random), we would want to collect additional data such as:
+
+Number of times the recipe was viewed
+Whether users saved/bookmarked the recipe
+Time spent on the recipe page
+
+Missingness Analysis
+
+We conducted a missingness permutation test to examine the relationship between recipe characteristics and missing ratings.
+Our analysis focused on whether the missingness of ratings depends on other variables in our dataset.
+
+Testing Rating Missingness vs. Calories
+
+The histogram shows the distribution of our test statistic (difference in mean calories between recipes with
+and without ratings) across 1000 permutations. The red line indicates our observed difference of 87.86 calories. 
+With a p-value of 0.000, we reject the null hypothesis that ratings are missing completely at random with respect 
+to calories.
+
+This significant result suggests that the missingness of ratings depends on the calorie content of recipes - 
+specifically, recipes with missing ratings tend to have different calorie contents than those with ratings. 
+The data indicates that recipes with missing ratings have, on average, about 88 more calories than recipes with ratings.
+
+This strengthens the NMAR hypothesis, as it can show a clear relationship between missingness and recipe characteristics. 
+Higher-calorie recipes are less likely to receive ratings, which could be because:
+
+1. People might be less likely to make high-calorie recipes
+2. There might be some hesitation to rate high-calorie dishes
+3. The relationship might reflect broader patterns in user engagement with different types of recipes
+
+## Hypothesis Testing
+
+We conducted two key hypothesis tests to understand factors affecting recipe ratings:
+
+### Test 1: Effect of Calorie Content on Ratings
+
+**Null Hypothesis**: High-calorie recipes and low-calorie recipes have the same average rating, 
+and any observed differences are due to random chance.
+
+**Alternative Hypothesis**: High-calorie recipes have a different average rating than low-calorie recipes.
+
+**Test Statistic**: Difference in mean ratings between high-calorie (above median) and low-calorie (below median) recipes.
+
+**Significance Level**: α = 0.05
+
+
+**Results**: We observed a difference of -0.0082 in mean ratings, with a p-value of 0.062. 
+Since our p-value is greater than our significance level, we fail to reject the null hypothesis. 
+This shows that there isn't strong evidence that calorie content significantly influences recipe ratings.
+
+### Test 2: Effect of Preparation Time on Ratings
+
+**Null Hypothesis**: Recipes with longer and shorter preparation times have the same average rating, 
+and any observed differences are due to random chance.
+
+**Alternative Hypothesis**: Recipes with longer preparation times have a different average rating than those 
+with shorter preparation times.
+
+**Test Statistic**: Difference in mean ratings between long-prep (above median) and short-prep (below median) recipes.
+
+**Significance Level**: α = 0.05
+
+**Results**: We observed a difference of -0.0315 in mean ratings, with a p-value < 0.001. 
+This shows that there might be a relationship between preparation time and recipe ratings, with 
+shorter-prep recipes tending to receive slightly higher ratings.
+
+### Justification of Choices
+- We chose to use difference in means as our test statistic because it's interpretable and is 
+appropriate for comparing different continuous variables (ratings) between two groups.
+- The 0.05 significance level is a standard choice that balances Type I and Type II errors.
+
 
 # The prediction problem is to determine whether a recipe will be highly rated based on its characteristics so we 
 are tackling a binary classification problem in which we can classify the variable as 1 or 0. 1 represents highly 
@@ -28,6 +104,164 @@ assessed by consumers. The model uses only features that are available prior to 
 and nutritional values, which are all just properties of the recipe. Nothing after the fact is used. This ensures the model
 adheres to realistic constraints and avoids data leakage.
 
+Our final model uses a Random Forest Classifier to predict whether a recipe will be highly rated ( which is greater than or equal to 4.5 stars). We selected different features that capture both recipe complexity and nutritional content:
+
+**Quantitative Features **
+- Preparation time (minutes)
+- Number of steps
+- Number of ingredients
+- Nutritional values:
+  - Calories
+  - Total fat
+  - Protein
+- Engineered features:
+  - Calories per step
+  - Steps per ingredient
+
+We used StandardScaler to normalize all features before training, ensuring they're on comparable scales.
+
+### Model Performance
+
+Our model achieved the following metrics on the test set:
+- Accuracy: 0.671
+- F1-Score: 0.792
+- Precision: 0.74 (High-rated recipes)
+- Recall: 0.86 (High-rated recipes)
+
+### Feature Importance
+The most influential features in predicting high ratings were:
+1. Calories
+2. Calories per step 
+3. Protein content
+4. Preparation time
+
+### Model Assessment
+
+While our model shows improvement over the baseline 
+(F1-Score increase from 0.712 to 0.792), we believe it's only moderately good for several reasons:
+
+**Strengths:**
+- Significantly better than random guessing
+- Good recall for highly-rated recipes (0.86)
+- Interpretable feature importance
+
+**Limitations:**
+- Moderate accuracy (0.671)
+- Potential bias towards predicting high ratings due to class imbalance
+- Lower performance on identifying poorly-rated recipes
+
+The model's performance suggests that while recipe ratings are somewhat predictable from objective features,
+there are likely subjective factors that our current features don't capture.
 
 
+## Model Development and Feature Engineering
 
+### Feature Selection and Engineering
+
+Building upon our baseline model (which used only cooking time and calories),
+we engineered additional features that capture recipe complexity and nutritional density:
+
+1. **Calories per Step** (calories/n_steps)
+- Rationale: This feature captures recipe efficiency - a recipe with high calories but 
+few steps might indicate simpler, higher-calorie ingredients (like desserts), while many steps
+for fewer calories might suggest more complex, health-focused dishes
+- From a recipe perspective, this helps distinguish between naturally caloric dishes and potentially overcomplicated ones
+
+2. **Steps per Ingredient** (n_steps/n_ingredients)
+- Rationale: This measures recipe complexity in a normalized way. A high ratio suggests 
+more complex preparation per ingredient, while a low ratio suggests simpler preparation
+- This could capture user satisfaction better than raw step count, as it accounts for whether 
+the complexity is "justified" by the number of ingredients
+
+3. **Protein Content**
+- Rationale: Distinct from total calories, protein content often indicates a recipe's
+role as a main dish vs. snack/dessert
+- User expectations often differ for protein-rich main dishes compared to other recipes
+
+4. **Total Fat**
+- Rationale: Fat content often correlates with flavor and satiety
+- Users might have different expectations for indulgent vs. light recipes
+
+### Model Selection and Hyperparameters
+
+We chose a Random Forest Classifier for our final model because:
+- It handles non-linear relationships between features
+- It's robust to different scales and types of features
+- It provides interpretable feature importance scores
+
+Best performing hyperparameters from our grid search:
+- n_estimators: 100
+- max_depth: 20
+- min_samples_split: 5
+
+### Model Improvement
+
+Our final model showed significant improvement over the baseline logistic regression:
+
+**Baseline Model:**
+- F1-Score: 0.712
+- Accuracy: 0.590
+
+**Final Model:**
+- F1-Score: 0.792 (+0.08)
+- Accuracy: 0.671 (+0.081)
+
+The improvement is from:
+The addition of engineered features that capture recipe complexity in more nuanced ways
+
+## Model Fairness Analysis
+
+### Motivation
+We focused on this project since our society focuses more on how healthy foods are, it's crucial to ensure our recipe rating prediction model doesn't unfairly discriminate between recipes based on their caloric content. This fairness assessment will show whether our model maintains consistent predictive performance across different types of recipes.
+
+### Test Design
+- **Groups Compared**:
+  - **Low-calorie recipes** (≤ median calories, 374.5 calories/serving)
+  - **High-calorie recipes** (> median calories)
+
+- **Evaluation Metric**: Precision
+  - *Rationale*: We chose precision because it directly measures the reliability of our "highly-rated" predictions. A difference in precision between groups would indicate that our model is more trustworthy for one type of recipe over another.
+
+### Hypotheses
+**Null Hypothesis (H₀)**: The model is fair - any difference in precision between high-calorie and low-calorie recipes is due to random chance.
+
+**Alternative Hypothesis (H₁)**: The model is biased - there is a systematic difference in precision between high-calorie and low-calorie recipes.
+
+### Statistical Analysis
+- **Test Statistic**: Difference in precision (high-calorie - low-calorie)
+- **Significance Level**: α = 0.05
+- **Observed Results**:
+  - Low-calorie precision: 0.745
+  - High-calorie precision: 0.728
+  - Observed difference: -0.017
+
+### Results and Implications
+With a p-value of 0.022 (< α = 0.05), our analysis shows evidence of model bias. The model appears to be more reliable when predicting highly-rated low-calorie recipes compared to high-calorie ones.
+
+This bias could stem from several factors:
+1. Potential sampling bias in our training data
+2. Different user rating patterns for high vs. low-calorie recipes
+3. Varying complexity in recipe features between calorie ranges
+
+### In order to eliminate bias we can:
+1. Collect more balanced training data across calorie ranges
+2. Consider separate models for different recipe categories
+3. Add features that better capture the unique characteristics of high-calorie recipes
+
+## Conclusion
+Our analysis of Food.com recipes shows several key insights about recipe ratings and the challenges of predicting them. 
+Through our in depth analysis, we discovered that while most recipes receive favorable ratings (above 4 stars), the factors 
+influencing these ratings are complex and correlated. Our machine learning model, while showing significant improvement 
+over the baseline (F1-score increase from 0.712 to 0.792), reveals that recipe success isn't only determined by quantifiable 
+features like time or nutritional content.
+
+The fairness analysis showed a significant bias in our model's performance between high and low-calorie recipes, 
+which highlights the importance of considering ethical implications in machine learning applications, 
+even in seemingly straightforward projects like recipe recommendations. This project demonstrates that while we can 
+predict recipe ratings with moderate success, there can still be room for improvement in creating fair and applicable 
+prediction models.
+
+Moving forward, this project can show us several promising directions for future research. 
+For example, we can investigate different user-specific preferences,  incorporating more qualitative features, 
+and develop more specialized models for different recipe categories. These enhancements could lead to more accurate
+and equitable recipe rating predictions, ultimately helping both home cooks and professional cooks.

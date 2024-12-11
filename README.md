@@ -102,7 +102,7 @@ Our analysis revealed several interesting patterns through visualization:
 
 ### Rating Distribution
 
-<iframe src="assets/rating-distribution.html" width="800" height="600" frameborder="0"></iframe>  
+<iframe src="assets/fig1.html" width="800" height="600" frameborder="0"></iframe>  
 The distribution of recipe ratings shows a strong positive skew, with most recipes receiving ratings between 4 and 5 stars.
 
 ### Calorie Distribution

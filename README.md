@@ -101,7 +101,7 @@ fig2.write_html("assets/fig2.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_20.html"
+    src="iframe_figures/figure_12.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -113,7 +113,7 @@ fig2.write_html("assets/fig2.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_20.html"
+    src="iframe_figures/figure_12.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -214,6 +214,29 @@ fig9 = px.imshow(correlation_matrix,
                  title="Correlation Matrix of Numeric Variables")
 fig9.show()
 fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
+
+# Create a pivot table analyzing average ratings by calorie ranges
+# First create calorie categories
+recipes_with_ratings['calorie_category'] = pd.cut(
+    recipes_with_ratings['calories'],
+    bins=[0, 200, 400, 600, 800, float('inf')],
+    labels=['0-200', '201-400', '401-600', '601-800', '800+']
+)
+
+# Create pivot table
+pivot_analysis = recipes_with_ratings.pivot_table(
+    values=['avg_rating', 'n_steps', 'minutes'],
+    index='calorie_category',
+    aggfunc={
+        'avg_rating': 'mean',
+        'n_steps': 'mean',
+        'minutes': 'mean'
+    }
+).round(2)
+
+# Convert to markdown for the website
+print(pivot_analysis.to_markdown())
+
 ```
 
 
@@ -221,7 +244,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -233,7 +256,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -245,7 +268,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -257,7 +280,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -269,7 +292,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -281,7 +304,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -293,7 +316,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -305,7 +328,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -317,7 +340,7 @@ fig9.write_html("assets/fig11.html", include_plotlyjs="cdn")
     scrolling="no"
     width="100%"
     height="545px"
-    src="iframe_figures/figure_22.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>

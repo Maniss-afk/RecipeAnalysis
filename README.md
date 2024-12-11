@@ -323,6 +323,48 @@ print(pivot_analysis.to_markdown())
 ></iframe>
 
 
+### Exploratory Analysis
+
+Our analysis revealed several interesting patterns through visualization:
+
+Rating Distribution
+
+<iframe src="assets/fig3.html" width="800" height="600" frameborder="0" ></iframe>
+The distribution of recipe ratings shows a strong positive skew, with most recipes receiving ratings between 4 and 5 stars.
+
+Calorie Distribution
+
+<iframe src="assets/fig4.html" width="800" height="600" frameborder="0" ></iframe>
+Most recipes contain between 200-600 calories per serving, with a long right tail indicating some very high-calorie recipes.
+
+Preparation Time Analysis
+
+<iframe src="assets/fig5.html" width="800" height="600" frameborder="0" ></iframe>
+Cooking times are right-skewed, with most recipes taking less than 60 minutes to prepare.
+
+Steps Distribution
+
+<iframe src="assets/fig7.html" width="800" height="600" frameborder="0" ></iframe>
+The relationship between recipe complexity (number of steps) and ratings shows that moderately complex recipes tend to receive slightly higher ratings.
+
+Correlation Analysis
+
+<iframe src="assets/fig11.html" width="800" height="600" frameborder="0" ></iframe>
+The correlation matrix reveals weak to moderate relationships between our numeric variables, with the strongest correlation between number of steps and cooking time.
+
+
+Our data cleaning process involved several key steps to ensure data quality and reliability:
+
+Merging Datasets: We combined the recipes and interactions datasets using recipe IDs as the key, preserving all recipes even if they had no ratings (left join).
+1. Handling Missing and Zero Ratings:
+Replaced ratings of 0 with NaN as these likely represented missing ratings rather than actual zero scores
+This distinction was important for accurately calculating average ratings
+2. Aggregating Ratings:
+Calculated the mean rating for each recipe
+Created a new DataFrame with one row per recipe containing the average rating
+3. Extracting Nutritional Information:
+The nutrition data was stored as a string representation of a list
+We extracted calories (first element) and converted it to a numeric value
 
 ## Assessment of Missingness
 

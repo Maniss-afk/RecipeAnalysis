@@ -973,6 +973,9 @@ recipes_with_ratings['nutrition'].head().to_frame().to_html(f"assets/fig{num}.ht
     4       [267.0, 30.0, 12.0, 12.0, 29.0, 48.0, 2.0]
     Name: nutrition, dtype: object
 
+### 
+The prediction problem is to determine whether a recipe will be highly rated based on its characteristics so we are tackling a binary classification problem in which we can classify the variable as 1 or 0. 1 represents highly rated and 0 not highly rated. The response variable is Highly Rated, based on if the recipe has a higher rating than 4.5. The threshold of 4.5 was chosen by us because we know that recipes with higher ratings are generally more appealing. The primary evaluation metric that we will be using is the F1-score, which balances precision and recall. This metric is the best for this because it minimizes false negatives and positives helping us identify highly rated recipes. In addition to nutritional data like calories, total fat, sugar, sodium, protein, saturated fat, and carbs, the features include minutes, n_steps, and n_ingredients. In order to ensure that the model is trained on data that would actually be available at prediction time, these features are justified because they are all known before a recipe is assessed by consumers. The model uses only features that are available prior to prediction, such as preparation details and nutritional values, which are all just properties of the recipe. Nothing after the fact is used. This ensures the model adheres to realistic constraints and avoids data leakage.
+
 
 ## Baseline Model
 

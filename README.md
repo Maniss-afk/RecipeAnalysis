@@ -18,3 +18,5 @@ pd.options.plotting.backend = 'plotly'
 
 ---
 
+## Step 1: Introduction
+

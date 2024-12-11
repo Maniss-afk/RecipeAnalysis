@@ -96,27 +96,35 @@ fig2.show()
 fig2.write_html("assets/fig2.html", include_plotlyjs="cdn")
 ```
 
+## Exploratory Analysis
 
-<iframe
-    scrolling="no"
-    width="100%"
-    height="545px"
-    src="iframe_figures/figure_12.html"
-    frameborder="0"
-    allowfullscreen
-></iframe>
+Our analysis revealed several interesting patterns through visualization:
 
+### Rating Distribution
 
+<iframe src="assets/rating-distribution.html" width="800" height="600" frameborder="0"></iframe>  
+The distribution of recipe ratings shows a strong positive skew, with most recipes receiving ratings between 4 and 5 stars.
 
+### Calorie Distribution
 
-<iframe
-    scrolling="no"
-    width="100%"
-    height="545px"
-    src="iframe_figures/figure_12.html"
-    frameborder="0"
-    allowfullscreen
-></iframe>
+<iframe src="assets/calorie-distribution.html" width="800" height="600" frameborder="0"></iframe>  
+Most recipes contain between 200-600 calories per serving, with a long right tail indicating some very high-calorie recipes.
+
+### Preparation Time Analysis
+
+<iframe src="assets/cooking-time-distribution.html" width="800" height="600" frameborder="0"></iframe>  
+Cooking times are right-skewed, with most recipes taking less than 60 minutes to prepare.
+
+### Steps Distribution
+
+<iframe src="assets/steps-vs-rating.html" width="800" height="600" frameborder="0"></iframe>  
+The relationship between recipe complexity (number of steps) and ratings shows that moderately complex recipes tend to receive slightly higher ratings.
+
+### Correlation Analysis
+
+<iframe src="assets/correlation-matrix.html" width="800" height="600" frameborder="0"></iframe>  
+The correlation matrix reveals weak to moderate relationships between our numeric variables, with the strongest correlation between the number of steps and cooking time.
+
 
 
 

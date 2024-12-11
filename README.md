@@ -95,7 +95,45 @@ fig2 = px.scatter(recipes_with_ratings,
 fig2.show()
 fig2.write_html("assets/fig2.html", include_plotlyjs="cdn")
 ```
+
 ### Introduction
+In this society where online recipes guide our culinary adventures, understanding what makes a recipe successful is more relevant than ever. This project dives deep into Food.com's extensive database to answer a crucial question: **What is the relationship between a recipe's caloric content and its user ratings? Do high-calorie recipes tend to receive different ratings than low-calorie recipes?**
+
+### About the Dataset
+
+The dataset combines two rich sources from Food.com:
+1. A collection of 83,782 unique recipes posted from 2008 onwards
+2. User interactions including ratings and reviews
+
+When these datasets are merged and processed, we get detailed insights into not just what people cook, but how they rate different types of recipes. The dataset reveals interesting patterns about user preferences and the relationship between nutritional content and recipe popularity.
+
+### Key Features Analyzed
+
+Our analysis focuses on several important recipe characteristics:
+
+| Column Name | Description | Example |
+|----------------|--------------------------------------------------------------------------------------------|-------------------------------------------|
+| calories       | Calories per serving (extracted from nutrition info)                                       | 138.4 calories |
+| avg_rating     | Mean user rating on a scale of 1-5 stars                                                   | 4.5 stars |
+| minutes        | Total preparation time                                                                     | 45 minutes |
+| n_steps        | Number of steps in the recipe instructions                                                 | 8 steps |
+| n_ingredients  | Total ingredients required                                                                 | 6 ingredients |
+| nutrition      | List containing [calories, total fat, sugar, sodium, protein, saturated fat, carbohydrates] | [138.4, 10.0, 50.0, 3.0, 3.0, 19.0, 6.0] |
+
+### Why This Matters
+
+This investigation is significant for several key audiences:
+- **Home Cooks**: Understanding the relationship between calories and ratings helps in recipe selection and setting expectations
+- **Health Advocates**: Understanding user preferences regarding recipe calories can inform strategies for promoting healthier eating
+
+As the influence of online recipe platforms grows, understanding these relationships becomes increasingly important for both individual cooking choices and broader public health initiatives.
+
+### Project Goals
+
+Through this analysis, we want to:
+1. Uncover patterns in how users rate recipes of different caloric content
+2. Test whether there's a statistically significant relationship between calories and ratings
+3. Develop a predictive model for recipe ratings based on nutritional and preparation characteristics
 
 ## Data Cleaning and Exploratory Data Analysis
 
